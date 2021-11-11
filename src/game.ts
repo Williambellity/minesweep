@@ -4,6 +4,8 @@
  *  lorsqu’un drapeau est posé, lorsqu’une case est explorée)
  */
 
+import {terminal} from "terminal-kit";
+
 export interface IGameElement {
   type: string;
   x: number;
@@ -41,6 +43,7 @@ export const createGame = () => {
 
 export const handleEvent = (game: IGame, event: GameEvent): IGame => {
   const {x: prevX, y: prevY} = game.cursorPosition;
+  let gameElements = game.gameElements;
   let cursorPosition = {x: prevX, y: prevY};
   switch (event) {
     case "UP":
@@ -59,8 +62,15 @@ export const handleEvent = (game: IGame, event: GameEvent): IGame => {
       process.exit();
       break;
     case "f":
-      // term.getCursorLocation()
-
+      const newFlag: IGameElement = {type: "FLAG", x: prevX, y: prevY};
+      // console.log("press");
+      if (gameElements.includes(newFlag)) {
+        // console.log("include");
+        gameElements = gameElements.filter((val) => val !== newFlag);
+      } else {
+        // console.log("no include");
+        gameElements = [...gameElements, newFlag];
+      }
       break;
     default:
       // Echo anything else
@@ -69,5 +79,5 @@ export const handleEvent = (game: IGame, event: GameEvent): IGame => {
       // );
       break;
   }
-  return {...game, cursorPosition: cursorPosition};
+  return {gameElements, cursorPosition};
 };
