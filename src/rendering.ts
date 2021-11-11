@@ -4,29 +4,41 @@
 
  */
 
-import {Terminal} from "terminal-kit";
-import {createGame} from "./game";
-import {moveTo, X_OFFSET, Y_OFFSET} from "./index";
+import {terminal as term} from "terminal-kit";
+import {createGame, IGame} from "./game";
 
+export const X_OFFSET = 20;
+export const Y_OFFSET = 10;
+
+export const moveTo = (x: number, y: number, text: string) =>
+  term.moveTo(X_OFFSET + x, Y_OFFSET + y, text);
 const BOARD_SIZE = 12;
 
 const mines = createGame();
 
-export const renderBoard = (term: Terminal) => {
+const renderBoard = (game: IGame) => {
   for (let x = 0; x < BOARD_SIZE; x++) {
-    moveTo(x, 0, "━");
+    moveTo(x, -1, "━");
     moveTo(x, BOARD_SIZE, "━");
   }
   for (let y = 0; y < BOARD_SIZE; y++) {
-    moveTo(0, y, "┃");
+    moveTo(-1, y, "┃");
     moveTo(BOARD_SIZE, y, "┃");
   }
-  moveTo(0, 0, "┏");
-  moveTo(BOARD_SIZE, 0, "┓");
-  moveTo(0, BOARD_SIZE, "┗");
+  moveTo(-1, -1, "┏");
+  moveTo(BOARD_SIZE, -1, "┓");
+  moveTo(-1, BOARD_SIZE, "┗");
   moveTo(BOARD_SIZE, BOARD_SIZE, "┛");
 
-  mines.forEach((val) => {
-    term.moveTo(X_OFFSET + 1 + val.x, Y_OFFSET + 1 + val.y, "x");
+  game.gameElements.forEach((val) => {
+    term.moveTo(X_OFFSET + val.x, Y_OFFSET + val.y, "x");
   });
+  term.moveTo(
+    X_OFFSET + game.cursorPosition.x,
+    Y_OFFSET + game.cursorPosition.y
+  );
+};
+
+export const renderGame = (game: IGame) => {
+  renderBoard(game);
 };

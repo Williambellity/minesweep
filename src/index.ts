@@ -4,54 +4,26 @@
 
  */
 
-import {terminal} from "terminal-kit";
-import {createGame} from "./game";
-import {renderBoard} from "./rendering";
+import {terminal as term} from "terminal-kit";
+import {createGame, handleEvent, GameEvent, isGameEvent} from "./game";
+import {renderGame} from "./rendering";
 
-export const X_OFFSET = 5;
-export const Y_OFFSET = 5;
+term.grabInput({mouse: "button"});
 
-export const moveTo = (x: number, y: number, text: string) =>
-  terminal.moveTo(X_OFFSET + x, Y_OFFSET + y, text);
+term.fullscreen(true);
 
-terminal.grabInput({mouse: "button"});
+let game = createGame();
+renderGame(game);
 
-terminal.fullscreen(true);
-
-renderBoard(terminal);
-
-terminal.on("key", function (key: string) {
-  switch (key) {
-    case "UP":
-      terminal.up(1);
-      break;
-    case "DOWN":
-      terminal.down(1);
-      break;
-    case "LEFT":
-      terminal.left(1);
-      break;
-    case "RIGHT":
-      terminal.right(1);
-      break;
-    case "CTRL_C":
-      process.exit();
-      break;
-    case "f":
-      // terminal.getCursorLocation()
-
-      break;
-    default:
-      // Echo anything else
-      // terminal.noFormat(
-      //   Buffer.isBuffer(data.code) ? data.code : String.fromCharCode(data.code)
-      // );
-      break;
+term.on("key", function (key: string) {
+  if (isGameEvent(key)) {
+    game = handleEvent(game, key);
   }
+  renderGame(game);
 });
 
 //
 
-terminal.on("mouse", function (data: {x: number; y: number}) {
-  terminal.moveTo(data.x, data.y);
+term.on("mouse", function (data: {x: number; y: number}) {
+  term.moveTo(data.x, data.y);
 });
