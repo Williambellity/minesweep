@@ -5,14 +5,13 @@
  */
 
 import {terminal as term} from "terminal-kit";
-import {createGame, IGame, IGameElement} from "./game";
+import {BOARD_SIZE, createGame, IGame, IGameElement} from "./game";
 
 export const X_OFFSET = 20;
 export const Y_OFFSET = 10;
 
 export const moveTo = (x: number, y: number, text: string) =>
   term.moveTo(X_OFFSET + x, Y_OFFSET + y, text);
-const BOARD_SIZE = 12;
 
 const mines = createGame();
 
@@ -44,6 +43,12 @@ const renderElement = (gameElements: IGameElement[]) => {
         break;
       case "FLAG":
         symbol = "f";
+        break;
+      case "INFO":
+        if (val.info !== undefined) {
+          symbol = val.info.toString();
+        }
+
         break;
     }
     term.moveTo(X_OFFSET + val.x, Y_OFFSET + val.y, symbol);
